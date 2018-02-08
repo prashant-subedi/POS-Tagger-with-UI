@@ -7,6 +7,7 @@ from  corpus import load_corpus
 import  numpy as np
 import sys
 from dictionary import  conversion
+from ambigious_class import *
 a = {
 
     "NN":"Common Noun",
@@ -19,42 +20,6 @@ except ValueError:
     exit()
 except IndexError:
     TEST = 2
-class AmbigiousClass:
-    def __init__(self,name):
-        self.name = name
-        self.X = []
-        self.Y = []
-        self.word_list =  set()
-
-    def set_encoders(self,le,oh):
-        self.label_encoder = le
-        self.onehot_encoder = oh
-
-    def get_encoder(self):
-        #This encoder is only for Y values, encode X using a global encoder
-        return self.label_encoder, self.onehot_encoder
-
-    def add_XY(self,X,Y):
-        self.X.append(X)
-        self.Y.append(Y)
-
-    def get_XY(self):
-        return self.X,self.Y
-
-    def add_word(self,word):
-        self.word_list.add(word)
-
-    def get_word(self):
-        return self.word_list
-
-    def set_clf(self,clf):
-        self.clf = clf
-
-    def get_clf(self):
-        return self.clf
-
-    def __str__(self):
-        return "".join(self.word_list)
 
     #def get_
 from sklearn.tree import DecisionTreeClassifier
@@ -185,6 +150,26 @@ def classify_tokenized_sentence(words,itr = 0):
                 labeled_string[e] = global_label_encoder.inverse_transform([np.argmax(pre)])[0]
 
     return labeled_string
+import pickle
+
+amb_class_pkl = open("amb_cls.pkl","wb")
+pickle.dump(amb_class,amb_class_pkl)
+
+global_label_encoder_pkl = open("global_label_encoder.pkl","wb")
+pickle.dump(global_label_encoder,global_label_encoder_pkl)
+
+global_hot_encoder_pkl = open("global_hot_encoder.pkl","wb")
+pickle.dump(global_hot_encoder,global_hot_encoder_pkl)
+
+statistic_pkl = open("statistic.pkl","wb")
+pickle.dump(statistic,statistic_pkl)
+
+heighest_probabilty_pkl = open("heighest_probabilty.pkl","wb")
+pickle.dump(heighest_probabilty,heighest_probabilty_pkl)
+
+
+global_clf_pkl = open("global_clf.pkl","wb")
+pickle.dump(global_clf,global_clf_pkl)
 
 def tokenizer(s):
     words = [x.strip() for x in s.split(" ") if x != ""]
@@ -207,3 +192,5 @@ while(True):
         tags_predicted = classify_tokenized_sentence(words, itr=2)
         for i in range(len(words)):
             print(words[i] , conversion[tags_predicted[i]])
+
+
